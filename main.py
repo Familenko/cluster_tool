@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-class Clusterer:
+class Cluster:
     def __init__(self, X: pd.DataFrame):
         self.df: pd.DataFrame = X
         self.X: pd.DataFrame = X
@@ -60,8 +60,8 @@ class Clusterer:
         )
 
         plt.title("Distance plot")
-        plt.xlabel("Number of cluster")
-        plt.ylabel("Distance_threshold")
+        plt.xlabel("Number of clusters")
+        plt.ylabel("Distance threshold")
         plt.xticks(range(min(n_cluster_dis), max(n_cluster_dis) + 1))
         plt.yticks(np.arange(0, max(distance_threshold) + 1, step=1))
         plt.legend(title="Silhouette", loc="upper right")
@@ -70,7 +70,7 @@ class Clusterer:
 
         df = pd.DataFrame(
             {
-                "n_clusters": n_cluster_dis,
+                "number_of_clusters": n_cluster_dis,
                 "distance_threshold": distance_threshold,
                 "silhouette": silhouette_dis,
             }
