@@ -78,3 +78,22 @@ class AgglomerativeCluster:
         )
 
         return df.transpose()
+
+    def agglo_knife(
+            self,
+            min_k,
+            max_k,
+            step=1,
+            knife=True
+    ):
+        # DESCRIPTION:
+
+        #     Build selected range of clusters and represent knife metric to ich of them
+        #     'Knifes' should be similar to ich other and have good shape without leakages
+
+        # ARGUMENTS:
+
+        #     min_k - minimum amount of cluster
+        #     max_k - maximum amount of cluster
+        #     step - step between clusters
+        #     knife - if True, knife metric will be represented
