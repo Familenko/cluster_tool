@@ -5,7 +5,6 @@ from sklearn.metrics import silhouette_score, silhouette_samples
 import pandas as pd
 
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
 import seaborn as sns
 
 
@@ -82,8 +81,8 @@ class AgglomerativeCluster:
 
     def agglo_knife(
             self,
-            min_k: int,
-            max_k: int,
+            min_k: int = 2,
+            max_k: int = 10,
             step=1,
             knife: bool = True,
 
@@ -141,8 +140,13 @@ class AgglomerativeCluster:
 
                     size_cluster_i = ith_cluster_silhouette_values.shape[0]
                     y_upper = y_lower + size_cluster_i
-                    cluster_colors = sns.color_palette("Set1", n_colors=n_clusters)
+
+                    cluster_colors = sns.color_palette(
+                        "Set1",
+                        n_colors=n_clusters
+                    )
                     color = cluster_colors[i % n_clusters]
+
                     ax1.fill_betweenx(
                         np.arange(y_lower, y_upper),
                         0,
@@ -157,7 +161,11 @@ class AgglomerativeCluster:
                 ax1.set_title("Silhouette plot for n_clusters = %d" % n_clusters)
                 ax1.set_xlabel("Silhouette coefficient values")
                 ax1.set_ylabel("Cluster label")
-                ax1.axvline(x=silhouette_score(self.X, cluster_labels), color="red", linestyle="--")
+                ax1.axvline(
+                    x=silhouette_score(self.X, cluster_labels),
+                    color="red",
+                    linestyle="--"
+                )
                 ax1.set_yticks([])
                 ax1.set_xticks([-0.1, 0, 0.2, 0.4, 0.6, 0.8, 1])
 
