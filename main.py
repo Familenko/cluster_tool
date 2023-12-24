@@ -1,7 +1,7 @@
 import pandas as pd
 
 from agglomerative_cluster import AgglomerativeCluster
-from kmean import KMeansCluster
+from kmean_cluster import KMeansCluster
 
 
 class Cluster(AgglomerativeCluster, KMeansCluster):
