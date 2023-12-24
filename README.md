@@ -36,4 +36,4 @@ cl = Cluster(df)
 ```
 
 Detailed description of the methods and 
-examples of use can be found in the [notebook](test_notebook.ipynb)
+examples of use can be found in the [notebook](examples/test_notebook.ipynb)

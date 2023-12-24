@@ -7,7 +7,7 @@ from sklearn.metrics import silhouette_score
 
 import matplotlib.pyplot as plt
 
-from knife import knife_show
+from utilities import knife_show
 
 
 class KMeansCluster:

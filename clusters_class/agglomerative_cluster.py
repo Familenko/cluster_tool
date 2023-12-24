@@ -9,7 +9,7 @@ from sklearn.metrics import silhouette_score
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from knife import knife_show
+from utilities import knife_show
 
 
 class AgglomerativeCluster:

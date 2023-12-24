@@ -10,9 +10,9 @@ from sklearn.decomposition import PCA
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
-from agglomerative_cluster import AgglomerativeCluster
-from kmean_cluster import KMeansCluster
-from dbscan_cluster import DBSCANCluster
+from clusters_class.agglomerative_cluster import AgglomerativeCluster
+from clusters_class.kmean_cluster import KMeansCluster
+from clusters_class.dbscan_cluster import DBSCANCluster
 
 
 class Cluster(AgglomerativeCluster, KMeansCluster, DBSCANCluster):
@@ -131,11 +131,13 @@ class Cluster(AgglomerativeCluster, KMeansCluster, DBSCANCluster):
         principal_components = pca.fit_transform(X)
         X = pd.DataFrame(principal_components)
 
-        print(f'pca.explained_variance_ratio_ = {pca.explained_variance_ratio_}')
-        print(f'np.sum(pca.explained_variance_ratio_ = {np.sum(pca.explained_variance_ratio_)}')
+        print(f'pca.explained_variance_ratio_ = '
+              f'{pca.explained_variance_ratio_}')
+        print(f'np.sum(pca.explained_variance_ratio_ = '
+              f'{np.sum(pca.explained_variance_ratio_)}')
 
         plt.figure(figsize=(8,6))
-        sns.scatterplot(x=X[0],y=X[1],data=df,hue=target,alpha=alpha)
+        sns.scatterplot(x=X[0], y=X[1], data=df, hue=target, alpha=alpha)
         plt.xlabel('First principal component')
         plt.ylabel('Second Principal Component')
         plt.show()
