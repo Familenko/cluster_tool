@@ -93,34 +93,39 @@ class KMeansCluster:
         silhouette_knife = []
 
         for n_clusters in tqdm.tqdm(range_n_clusters):
-            cluster = KMeans(
-                n_clusters=n_clusters,
-                n_init="auto",
-                **kwargs
-            )
-            cluster_labels = cluster.fit_predict(self.X)
 
-            n_clus_knife.append(n_clusters)
-            ssd_knife.append(round(cluster.inertia_, 1))
-            silhouette_knife.append(
-                round(silhouette_score(self.X, cluster_labels),3),
-            )
-
-            print(
-                "n_clusters =",
-                n_clusters,
-                'ssd =',
-                round(cluster.inertia_, 1),
-                "average silhouette_score =",
-                round(silhouette_score(self.X, cluster_labels),3),)
-
-            if knife:
-
-                knife_show(
-                    self,
-                    cluster_labels,
-                    n_clusters,
+            try:
+                cluster = KMeans(
+                    n_clusters=n_clusters,
+                    n_init="auto",
+                    **kwargs
                 )
+                cluster_labels = cluster.fit_predict(self.X)
+
+                n_clus_knife.append(n_clusters)
+                ssd_knife.append(round(cluster.inertia_, 1))
+                silhouette_knife.append(
+                    round(silhouette_score(self.X, cluster_labels),3),
+                )
+
+                print(
+                    "n_clusters =",
+                    n_clusters,
+                    'ssd =',
+                    round(cluster.inertia_, 1),
+                    "average silhouette_score =",
+                    round(silhouette_score(self.X, cluster_labels),3),)
+
+                if knife:
+
+                    knife_show(
+                        self,
+                        cluster_labels,
+                        n_clusters,
+                    )
+
+            except ValueError:
+                continue
 
         df = pd.DataFrame({
             'ssd':ssd_knife,

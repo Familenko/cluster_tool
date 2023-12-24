@@ -103,30 +103,35 @@ class AgglomerativeCluster:
         silhouette = []
 
         for n_clusters in tqdm.tqdm(range_n_clusters):
-            cluster = AgglomerativeClustering(
-                n_clusters=n_clusters,
-                **kwargs
-            )
-            cluster_labels = cluster.fit_predict(self.X)
 
-            n_clus.append(n_clusters)
-            silhouette.append(round(
-                silhouette_score(self.X, cluster_labels), 3)
-            )
-
-            print(
-                "n_clusters =",
-                n_clusters,
-                "average silhouette_score =",
-                round(silhouette_score(self.X, cluster_labels), 3))
-
-            if knife:
-
-                knife_show(
-                    self,
-                    cluster_labels,
-                    n_clusters,
+            try:
+                cluster = AgglomerativeClustering(
+                    n_clusters=n_clusters,
+                    **kwargs
                 )
+                cluster_labels = cluster.fit_predict(self.X)
+
+                n_clus.append(n_clusters)
+                silhouette.append(round(
+                    silhouette_score(self.X, cluster_labels), 3)
+                )
+
+                print(
+                    "n_clusters =",
+                    n_clusters,
+                    "average silhouette_score =",
+                    round(silhouette_score(self.X, cluster_labels), 3))
+
+                if knife:
+
+                    knife_show(
+                        self,
+                        cluster_labels,
+                        n_clusters,
+                    )
+
+            except ValueError:
+                continue
 
         df = pd.DataFrame({
             'silhouette': silhouette},

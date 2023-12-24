@@ -19,6 +19,7 @@ class DBSCANCluster:
             range_eps=10,
             min_sample=1,
             max_sample=5,
+            step_sample=1,
             epsindot=0.5,
             dotineps=5,
             knife=True
@@ -50,11 +51,10 @@ class DBSCANCluster:
             self.xmax = max_eps
             self.check_range = np.linspace(min_eps, max_eps, range_eps)
 
-
         if mod == 'dot':
             self.xmin = min_sample
             self.xmax = max_sample
-            self.check_range = range(min_sample, max_sample + 1)
+            self.check_range = range(min_sample, max_sample + 1, step_sample)
 
         for check_n in tqdm.tqdm(self.check_range):
             if mod == 'eps':
@@ -63,34 +63,39 @@ class DBSCANCluster:
             if mod == 'dot':
                 cluster = DBSCAN(min_samples=check_n, eps=epsindot)
 
-            cluster_labels = cluster.fit_predict(self.X)
+            try:
 
-            perc_outliers = 100 * np.sum(
-                cluster.labels_ == -1) / len(cluster.labels_
-                                             )
-            self.outlier_percent.append(perc_outliers)
+                cluster_labels = cluster.fit_predict(self.X)
 
-            amount_of_clusters.append(str(len(set(cluster_labels))))
-            check_values.append(str(check_n))
-            self.silhouette.append(
-                str(round(silhouette_score(self.X, cluster_labels), 3), )
-            )
+                perc_outliers = 100 * np.sum(
+                    cluster.labels_ == -1) / len(cluster.labels_
+                                                 )
+                self.outlier_percent.append(perc_outliers)
 
-            print(
-                "check_n =",
-                check_n,
-                "average silhouette_score =",
-                round(silhouette_score(self.X, cluster_labels), 3),
-                'outliers =',
-                perc_outliers
-            )
-
-            if knife:
-                knife_show(
-                self,
-                cluster_labels,
-                len(set(cluster_labels))
+                amount_of_clusters.append(str(len(set(cluster_labels))))
+                check_values.append(str(check_n))
+                self.silhouette.append(
+                    str(round(silhouette_score(self.X, cluster_labels), 3), )
                 )
+
+                print(
+                    "check_n =",
+                    check_n,
+                    "average silhouette_score =",
+                    round(silhouette_score(self.X, cluster_labels), 3),
+                    'outliers =',
+                    perc_outliers
+                )
+
+                if knife:
+                    knife_show(
+                    self,
+                    cluster_labels,
+                    len(set(cluster_labels))
+                    )
+
+            except ValueError:
+                continue
 
         df = pd.DataFrame({
             'n_clusters': amount_of_clusters,

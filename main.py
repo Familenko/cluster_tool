@@ -118,20 +118,6 @@ class Cluster(AgglomerativeCluster, KMeansCluster, DBSCANCluster):
         plt.ylabel('Second Principal Component')
         plt.show()
 
-    def pre_linkage(self):
-
-        # DESCRIPTION:
-
-        #     Check the optimal amount of cluster by scipy.cluster.hierarchy
-
-        Z = linkage(self.X, 'ward')
-
-        plt.figure(figsize=(10, 5))
-        dendrogram(Z, color_threshold=np.sqrt(len(self.X.columns)))
-        plt.xticks(rotation=90);
-
-        plt.show()
-
     def after_pie(self, bins=20):
 
         # DESCRIPTION:
@@ -179,35 +165,33 @@ class Cluster(AgglomerativeCluster, KMeansCluster, DBSCANCluster):
 
         return ax
 
-    def pre_dendrogram(self, n_clusters=2):
+    def dendrogram(self, n_clusters=2):
 
         # DESCRIPTION:
-
-        #     By using this diagram possible make assessment of
-        #     chosen amount of cluster on actual data
-
-        # ARGUMENTS:
-
-        #     k - chosen amount of cluster
+        #     Check the optimal amount of cluster by scipy.cluster.hierarchy
+        #     By using this diagram, it is possible to make an assessment
+        #     of the chosen amount of clusters on actual data
 
         Z = linkage(self.X, 'ward')
 
-        clusters = fcluster(Z, n_clusters, criterion='maxclust')
-
         plt.figure(figsize=(10, 8))
-        plt.title('Dendrogram')
+        dendrogram(Z, color_threshold=np.sqrt(len(self.X.columns)))
+        plt.xticks(rotation=90);
+        plt.title('Automatic Clustering')
+        plt.show()
+
+        # Plot dendrogram with specified number of clusters
+        plt.figure(figsize=(10, 8))
+        plt.title('Custom Clustering')
         plt.xlabel('Sample index')
         plt.ylabel('Distance')
         dendrogram(
             Z,
             leaf_rotation=90,
             leaf_font_size=8.,
-            labels=np.arange(1, len(self.X)+1),
-            color_threshold=Z[-n_clusters+1, 2]
+            labels=np.arange(1, len(self.X) + 1),
+            color_threshold=Z[-n_clusters + 1, 2]
         )
-        plt.axhline(y = Z[-n_clusters + 1, 2], color='r', linestyle='--')
-        plt.xticks(rotation=90);
-
+        plt.axhline(y=Z[-n_clusters + 1, 2], color='r', linestyle='--')
+        plt.xticks(rotation=90)
         plt.show()
-
-
