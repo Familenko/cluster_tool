@@ -1,8 +1,10 @@
 import numpy as np
-import tqdm
-from sklearn.cluster import DBSCAN
-from sklearn.metrics import silhouette_score, silhouette_samples
 import pandas as pd
+
+import tqdm
+
+from sklearn.cluster import DBSCAN
+from sklearn.metrics import silhouette_score
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -108,6 +110,7 @@ class DBSCANCluster:
     def dbscan_outliers(self, percent=1):
 
         # DESCRIPTION:
+
         #     Build diagram to show the amount of outliers based on
         #     the tested parameter (eps or dot) in the knife method
 

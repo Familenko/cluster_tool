@@ -3,7 +3,7 @@ import pandas as pd
 
 from matplotlib import pyplot as plt
 import seaborn as sns
-from scipy.cluster.hierarchy import dendrogram, linkage, fcluster
+from scipy.cluster.hierarchy import dendrogram, linkage
 
 from sklearn.cluster import AgglomerativeClustering, KMeans, DBSCAN
 from sklearn.decomposition import PCA
@@ -44,27 +44,49 @@ class Cluster(AgglomerativeCluster, KMeansCluster, DBSCANCluster):
 
         if cluster == 'agglo':
             if param == 'n_clusters':
-                self.cluster = AgglomerativeClustering(n_clusters=value)
+                self.cluster = AgglomerativeClustering(
+                    n_clusters=value
+                )
                 if value2:
-                    self.cluster = AgglomerativeClustering(n_clusters=value, distance_threshold=value2)
+                    self.cluster = AgglomerativeClustering(
+                        n_clusters=value,
+                        distance_threshold=value2
+                    )
             elif param == 'distance_threshold':
-                self.cluster = AgglomerativeClustering(distance_threshold=value)
+                self.cluster = AgglomerativeClustering(
+                    distance_threshold=value
+                )
                 if value2:
-                    self.cluster = AgglomerativeClustering(distance_threshold=value, n_clusters=value2)
+                    self.cluster = AgglomerativeClustering(
+                        distance_threshold=value,
+                        n_clusters=value2
+                    )
 
         elif cluster == 'kmean':
             if param == 'n_clusters':
-                self.cluster = KMeans(n_clusters=value)
+                self.cluster = KMeans(
+                    n_clusters=value
+                )
 
         elif cluster == 'dbscan':
             if param == 'eps':
-                self.cluster = DBSCAN(eps=value)
+                self.cluster = DBSCAN(
+                    eps=value
+                )
                 if value2:
-                    self.cluster = DBSCAN(eps=value, min_samples=value2)
+                    self.cluster = DBSCAN(
+                        eps=value,
+                        min_samples=value2
+                    )
             elif param == 'min_samples':
-                self.cluster = DBSCAN(min_samples=value)
+                self.cluster = DBSCAN(
+                    min_samples=value
+                )
                 if value2:
-                    self.cluster = DBSCAN(min_samples=value, eps=value2)
+                    self.cluster = DBSCAN(
+                        min_samples=value,
+                        eps=value2
+                    )
 
         cluster_labels = self.cluster.fit_predict(self.X)
         self.result_df = self.df
@@ -168,6 +190,7 @@ class Cluster(AgglomerativeCluster, KMeansCluster, DBSCANCluster):
     def dendrogram(self, n_clusters=2):
 
         # DESCRIPTION:
+
         #     Check the optimal amount of cluster by scipy.cluster.hierarchy
         #     By using this diagram, it is possible to make an assessment
         #     of the chosen amount of clusters on actual data

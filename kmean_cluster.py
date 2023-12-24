@@ -1,11 +1,11 @@
-import numpy as np
-import tqdm
-from sklearn.cluster import KMeans
-from sklearn.metrics import silhouette_score, silhouette_samples
 import pandas as pd
 
+import tqdm
+
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 from knife import knife_show
 
@@ -17,6 +17,7 @@ class KMeansCluster:
             max_n: int = 10,
             **kwargs
     ):
+
         # DESCRIPTION:
 
         #     Build diagram with squared distance correlation of data in different cluster
@@ -79,7 +80,7 @@ class KMeansCluster:
         # DESCRIPTION:
 
         #     Build selected range of clusters and represent knife metric to ich of them
-        #     'Knifes' should be similar to ich other and have good shape without leakeges
+        #     'Knifes' should be similar to ich other and have good shape without leakages
 
         # ARGUMENTS:
 
@@ -128,9 +129,9 @@ class KMeansCluster:
                 continue
 
         df = pd.DataFrame({
-            'ssd':ssd_knife,
-            'silhouette':silhouette_knife,
-            'diff':pd.Series(ssd_knife).diff()
-            },index=range_n_clusters)
+            'ssd': ssd_knife,
+            'silhouette': silhouette_knife,
+            'diff': pd.Series(ssd_knife).diff()
+            }, index=range_n_clusters)
 
         return df.transpose()

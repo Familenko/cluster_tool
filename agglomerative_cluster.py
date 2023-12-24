@@ -1,8 +1,10 @@
 import numpy as np
-import tqdm
-from sklearn.cluster import AgglomerativeClustering
-from sklearn.metrics import silhouette_score, silhouette_samples
 import pandas as pd
+
+import tqdm
+
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.metrics import silhouette_score
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -18,6 +20,7 @@ class AgglomerativeCluster:
             range_d: int = 10,
             **kwargs
     ):
+
         # DESCRIPTION:
 
         #     Build diagram with distance correlation of data in different cluster
