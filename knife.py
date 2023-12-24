@@ -6,11 +6,12 @@ import seaborn as sns
 
 
 def knife_show(
-        self,
+        self: object,
         cluster_labels: np.ndarray,
         n_clusters: int,
-        ax1: plt.Axes
 ):
+    fig, ax1 = plt.subplots(1, 1)
+    fig.set_size_inches(7, 4)
 
     sample_silhouette_values = silhouette_samples(
         self.X,

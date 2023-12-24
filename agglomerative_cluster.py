@@ -103,9 +103,6 @@ class AgglomerativeCluster:
         silhouette = []
 
         for n_clusters in tqdm.tqdm(range_n_clusters):
-            fig, ax1 = plt.subplots(1, 1)
-            fig.set_size_inches(7, 4)
-
             cluster = AgglomerativeClustering(
                 n_clusters=n_clusters,
                 **kwargs
@@ -129,7 +126,6 @@ class AgglomerativeCluster:
                     self,
                     cluster_labels,
                     n_clusters,
-                    ax1
                 )
 
         df = pd.DataFrame({

@@ -93,9 +93,6 @@ class KMeansCluster:
         silhouette_knife = []
 
         for n_clusters in tqdm.tqdm(range_n_clusters):
-            fig, ax1 = plt.subplots(1, 1)
-            fig.set_size_inches(7, 4)
-
             cluster = KMeans(
                 n_clusters=n_clusters,
                 n_init="auto",
@@ -123,7 +120,6 @@ class KMeansCluster:
                     self,
                     cluster_labels,
                     n_clusters,
-                    ax1
                 )
 
         df = pd.DataFrame({
