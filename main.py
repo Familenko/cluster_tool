@@ -1,4 +1,13 @@
+import numpy as np
 import pandas as pd
+
+from matplotlib import pyplot as plt
+import seaborn as sns
+from scipy.cluster.hierarchy import dendrogram, linkage, fcluster
+
+from sklearn.cluster import AgglomerativeClustering, KMeans, DBSCAN
+from sklearn.decomposition import PCA
+from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 from agglomerative_cluster import AgglomerativeCluster
@@ -26,3 +35,179 @@ class Cluster(AgglomerativeCluster, KMeansCluster, DBSCANCluster):
         self.X = pd.DataFrame(scaled_data)
 
         self.scaler = scaler
+
+    def build_cluster(self, cluster='kmean', param='n_clusters', value=2, value2=None):
+
+        # DESCRIPTION:
+
+        #     Build selected amount of cluster
+
+        if cluster == 'agglo':
+            if param == 'n_clusters':
+                self.cluster = AgglomerativeClustering(n_clusters=value)
+                if value2:
+                    self.cluster = AgglomerativeClustering(n_clusters=value, distance_threshold=value2)
+            elif param == 'distance_threshold':
+                self.cluster = AgglomerativeClustering(distance_threshold=value)
+                if value2:
+                    self.cluster = AgglomerativeClustering(distance_threshold=value, n_clusters=value2)
+
+        elif cluster == 'kmean':
+            if param == 'n_clusters':
+                self.cluster = KMeans(n_clusters=value)
+
+        elif cluster == 'dbscan':
+            if param == 'eps':
+                self.cluster = DBSCAN(eps=value)
+                if value2:
+                    self.cluster = DBSCAN(eps=value, min_samples=value2)
+            elif param == 'min_samples':
+                self.cluster = DBSCAN(min_samples=value)
+                if value2:
+                    self.cluster = DBSCAN(min_samples=value, eps=value2)
+
+        cluster_labels = self.cluster.fit_predict(self.X)
+        self.result_df = self.df
+        self.result_df['cluster'] = cluster_labels
+
+    def build_pipe(self):
+        self.pipe = make_pipeline(self.scaler,self.cluster)
+
+        return self.pipe
+
+    def simple_check(self, mode='built', target='cluster', alpha=0.5):
+
+        # DESCRIPTION:
+
+        #     Check data with PCA preprocessing including DataFrame
+        #     built in build_knife and build_simple method
+
+        # ARGUMENTS:
+
+        #     mode - tested mode, data from which DataFrame will be taken
+        #     target - hue for scatterplot diagram in case of using cluster = 'origin'
+        #     alpha - alpha for scatterplot
+
+        if mode == 'origin':
+            X = self.df
+            df = self.df
+            target = self.df[target]
+
+        if mode == 'built':
+            X = self.result_df
+            df = self.result_df
+
+        if mode == "outliers":
+            X = self.result_df
+            df = self.result_df
+            target = np.where(df['cluster'] == -1, 'outliers', 'normal')
+
+        scaler = StandardScaler()
+        X = scaler.fit_transform(X)
+
+        pca = PCA(n_components=2)
+        principal_components = pca.fit_transform(X)
+        X = pd.DataFrame(principal_components)
+
+        print(f'pca.explained_variance_ratio_ = {pca.explained_variance_ratio_}')
+        print(f'np.sum(pca.explained_variance_ratio_ = {np.sum(pca.explained_variance_ratio_)}')
+
+        plt.figure(figsize=(8,6))
+        sns.scatterplot(x=X[0],y=X[1],data=df,hue=target,alpha=alpha)
+        plt.xlabel('First principal component')
+        plt.ylabel('Second Principal Component')
+        plt.show()
+
+    def pre_linkage(self):
+
+        # DESCRIPTION:
+
+        #     Check the optimal amount of cluster by scipy.cluster.hierarchy
+
+        Z = linkage(self.X, 'ward')
+
+        plt.figure(figsize=(10, 5))
+        dendrogram(Z, color_threshold=np.sqrt(len(self.X.columns)))
+        plt.xticks(rotation=90);
+
+        plt.show()
+
+    def after_pie(self, bins=20):
+
+        # DESCRIPTION:
+
+        #     Build distribution diagram
+
+        if len(self.result_df['cluster'].value_counts()) < 10:
+
+            cluster_counts = self.result_df['cluster'].value_counts()
+            plt.pie(cluster_counts, labels=cluster_counts.index, autopct='%1.1f%%')
+
+        else:
+
+            sns.displot(data=self.result_df, x='cluster', kde=True, color='green', bins=bins)
+
+        plt.show()
+
+    def after_heat(self, sh=12, vi=4):
+
+        # DESCRIPTION:
+
+        #     Build feature correlation diagram for 'knife' or 'simple' algorithm
+
+        # ARGUMENTS:
+
+        #     cluster - tested mode
+        #     sh - height of diagram
+        #     vi - length of diagram
+
+        cat_means = self.result_df.groupby('cluster').mean()
+
+        scaler = MinMaxScaler()
+        data = scaler.fit_transform(cat_means)
+        scaled_means = pd.DataFrame(data, cat_means.index, cat_means.columns)
+
+        if scaled_means.reset_index().iloc[0]['cluster'] == -1:
+
+            ax = plt.figure(figsize=(sh,vi), dpi=200)
+            ax = sns.heatmap(scaled_means.iloc[1:], annot=True, cmap='Greens')
+
+        else:
+
+            ax = plt.figure(figsize=(sh, vi), dpi=200)
+            ax = sns.heatmap(scaled_means, annot=True, cmap='Greens')
+
+        return ax
+
+    def pre_dendrogram(self, n_clusters=2):
+
+        # DESCRIPTION:
+
+        #     By using this diagram possible make assessment of
+        #     chosen amount of cluster on actual data
+
+        # ARGUMENTS:
+
+        #     k - chosen amount of cluster
+
+        Z = linkage(self.X, 'ward')
+
+        clusters = fcluster(Z, n_clusters, criterion='maxclust')
+
+        plt.figure(figsize=(10, 8))
+        plt.title('Dendrogram')
+        plt.xlabel('Sample index')
+        plt.ylabel('Distance')
+        dendrogram(
+            Z,
+            leaf_rotation=90,
+            leaf_font_size=8.,
+            labels=np.arange(1, len(self.X)+1),
+            color_threshold=Z[-n_clusters+1, 2]
+        )
+        plt.axhline(y = Z[-n_clusters + 1, 2], color='r', linestyle='--')
+        plt.xticks(rotation=90);
+
+        plt.show()
+
+
