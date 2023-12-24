@@ -13,7 +13,8 @@ class AgglomerativeCluster:
             self,
             min_d: int = 1,
             max_d: int = 5,
-            range_d: int = 10
+            range_d: int = 10,
+            **kwargs
     ):
         # DESCRIPTION:
 
@@ -31,14 +32,11 @@ class AgglomerativeCluster:
         distance_threshold = []
         silhouette_dis = []
 
-        for distance_threshold_n in tqdm(
-                distance_threshold_list,
-                desc="Checking distance"
-        ):
-
+        for distance_threshold_n in tqdm.tqdm(distance_threshold_list):
             cluster = AgglomerativeClustering(
                 n_clusters=None,
-                distance_threshold=distance_threshold_n
+                distance_threshold=distance_threshold_n,
+                **kwargs
             )
             cluster_labels = cluster.fit_predict(self.X)
 
@@ -85,7 +83,7 @@ class AgglomerativeCluster:
             max_k: int = 10,
             step=1,
             knife: bool = True,
-
+            **kwargs
     ):
         # DESCRIPTION:
 
@@ -102,14 +100,14 @@ class AgglomerativeCluster:
         n_clus = []
         silhouette = []
 
-        for n_clusters in tqdm(
-                range_n_clusters,
-                desc="Checking knifes"
-        ):
+        for n_clusters in tqdm.tqdm(range_n_clusters):
             fig, ax1 = plt.subplots(1, 1)
             fig.set_size_inches(7, 4)
 
-            cluster = AgglomerativeClustering(n_clusters=n_clusters)
+            cluster = AgglomerativeClustering(
+                n_clusters=n_clusters,
+                **kwargs
+            )
             cluster_labels = cluster.fit_predict(self.X)
 
             n_clus.append(n_clusters)
@@ -158,7 +156,7 @@ class AgglomerativeCluster:
                     ax1.text(-0.05, y_lower + 0.5 * size_cluster_i, str(i))
                     y_lower = y_upper + 10
 
-                ax1.set_title("Silhouette plot for n_clusters = %d" % n_clusters)
+                ax1.set_title(f"Silhouette plot for n_clusters = {n_clusters}")
                 ax1.set_xlabel("Silhouette coefficient values")
                 ax1.set_ylabel("Cluster label")
                 ax1.axvline(
