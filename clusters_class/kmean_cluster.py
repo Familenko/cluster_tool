@@ -13,8 +13,8 @@ from utilities import knife_show
 class KMeansCluster:
     def kmean_mount(
             self,
-            min_n: int = 2,
-            max_n: int = 10,
+            min_cluster: int = 2,
+            max_cluster: int = 10,
             **kwargs
     ):
 
@@ -27,7 +27,7 @@ class KMeansCluster:
         #     min_n - minimum cluster
         #     max_n - maximum cluster
 
-        range_n_clusters = list(range(min_n, max_n))
+        range_n_clusters = list(range(min_cluster, max_cluster))
 
         n_clus_mount = []
         ssd_mount = []
@@ -49,7 +49,7 @@ class KMeansCluster:
 
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 8))
 
-        ax1.plot(range(min_n, max_n), ssd_mount, 'o--')
+        ax1.plot(range(min_cluster, max_cluster), ssd_mount, 'o--')
         ax1.set_xlabel("K Value")
         ax1.set_ylabel("Sum of Squared Distances")
 
@@ -70,8 +70,8 @@ class KMeansCluster:
 
     def kmean_knife(
             self,
-            min_n,
-            max_n,
+            min_cluster,
+            max_cluster,
             step=1,
             knife=True,
             **kwargs
@@ -87,7 +87,7 @@ class KMeansCluster:
         #     min_n - minimum amount of cluster
         #     max_n - maximum amount of cluster
 
-        range_n_clusters = list(range(min_n, max_n, step))
+        range_n_clusters = list(range(min_cluster, max_cluster, step))
 
         n_clus_knife = []
         ssd_knife = []

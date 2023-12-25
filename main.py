@@ -16,6 +16,18 @@ from clusters_class.dbscan_cluster import DBSCANCluster
 
 
 class Cluster(AgglomerativeCluster, KMeansCluster, DBSCANCluster):
+    cluster_dic = {'agglo': AgglomerativeClustering(),
+                   'kmean': KMeans(),
+                   'dbscan': DBSCAN()}
+
+    scaler_dic = {'StandardScaler': StandardScaler(),
+                  'MinMaxScaler': MinMaxScaler()}
+
+    cluster = None
+    pipe = None
+    scaler = None
+    result_df = None
+
     def __init__(self, X: pd.DataFrame):
         self.df: pd.DataFrame = X
         self.X: pd.DataFrame = X
@@ -26,75 +38,23 @@ class Cluster(AgglomerativeCluster, KMeansCluster, DBSCANCluster):
 
         #     Preprocess the data with MinMaxScaler & StandardScaler
 
-        if scaler == 'StandardScaler':
-            scaler = StandardScaler()
-        if scaler == 'MinMaxScaler':
-            scaler = MinMaxScaler()
-
-        scaled_data = scaler.fit_transform(self.X)
+        self.scaler = self.scaler_dic[scaler]
+        scaled_data = self.scaler.fit_transform(self.X)
         self.X = pd.DataFrame(scaled_data)
 
-        self.scaler = scaler
-
-    def build_cluster(self, cluster='kmean', param='n_clusters', value=2, value2=None):
+    def build_cluster(self, cluster='kmean', **kwargs):
 
         # DESCRIPTION:
 
         #     Build selected amount of cluster
 
-        if cluster == 'agglo':
-            if param == 'n_clusters':
-                self.cluster = AgglomerativeClustering(
-                    n_clusters=value
-                )
-                if value2:
-                    self.cluster = AgglomerativeClustering(
-                        n_clusters=value,
-                        distance_threshold=value2
-                    )
-            elif param == 'distance_threshold':
-                self.cluster = AgglomerativeClustering(
-                    distance_threshold=value
-                )
-                if value2:
-                    self.cluster = AgglomerativeClustering(
-                        distance_threshold=value,
-                        n_clusters=value2
-                    )
-
-        elif cluster == 'kmean':
-            if param == 'n_clusters':
-                self.cluster = KMeans(
-                    n_clusters=value
-                )
-
-        elif cluster == 'dbscan':
-            if param == 'eps':
-                self.cluster = DBSCAN(
-                    eps=value
-                )
-                if value2:
-                    self.cluster = DBSCAN(
-                        eps=value,
-                        min_samples=value2
-                    )
-            elif param == 'min_samples':
-                self.cluster = DBSCAN(
-                    min_samples=value
-                )
-                if value2:
-                    self.cluster = DBSCAN(
-                        min_samples=value,
-                        eps=value2
-                    )
-
+        self.cluster = self.cluster_dic[cluster](**kwargs)
         cluster_labels = self.cluster.fit_predict(self.X)
         self.result_df = self.df
         self.result_df['cluster'] = cluster_labels
 
     def build_pipe(self):
         self.pipe = make_pipeline(self.scaler,self.cluster)
-
         return self.pipe
 
     def simple_check(self, mode='built', target='cluster', alpha=0.5):
@@ -115,11 +75,11 @@ class Cluster(AgglomerativeCluster, KMeansCluster, DBSCANCluster):
             df = self.df
             target = self.df[target]
 
-        if mode == 'built':
+        elif mode == 'built':
             X = self.result_df
             df = self.result_df
 
-        if mode == "outliers":
+        elif mode == "outliers":
             X = self.result_df
             df = self.result_df
             target = np.where(df['cluster'] == -1, 'outliers', 'normal')
@@ -149,12 +109,10 @@ class Cluster(AgglomerativeCluster, KMeansCluster, DBSCANCluster):
         #     Build distribution diagram
 
         if len(self.result_df['cluster'].value_counts()) < 10:
-
             cluster_counts = self.result_df['cluster'].value_counts()
             plt.pie(cluster_counts, labels=cluster_counts.index, autopct='%1.1f%%')
 
         else:
-
             sns.displot(data=self.result_df, x='cluster', kde=True, color='green', bins=bins)
 
         plt.show()
@@ -178,12 +136,10 @@ class Cluster(AgglomerativeCluster, KMeansCluster, DBSCANCluster):
         scaled_means = pd.DataFrame(data, cat_means.index, cat_means.columns)
 
         if scaled_means.reset_index().iloc[0]['cluster'] == -1:
-
             ax = plt.figure(figsize=(sh,vi), dpi=200)
             ax = sns.heatmap(scaled_means.iloc[1:], annot=True, cmap='Greens')
 
         else:
-
             ax = plt.figure(figsize=(sh, vi), dpi=200)
             ax = sns.heatmap(scaled_means, annot=True, cmap='Greens')
 

@@ -15,9 +15,9 @@ from utilities import knife_show
 class AgglomerativeCluster:
     def agglo_distance(
             self,
-            min_d: int = 1,
-            max_d: int = 5,
-            range_d: int = 10,
+            min_distance_threshold: int = 1,
+            max_distance_threshold: int = 5,
+            range_distance_threshold: int = 10,
             **kwargs
     ):
 
@@ -31,7 +31,11 @@ class AgglomerativeCluster:
         #     max_d - maximum level of distance
         #     range_d - amount of tested distances
 
-        distance_threshold_list = list(np.linspace(min_d, max_d, range_d))
+        distance_threshold_list = list(
+            np.linspace(min_distance_threshold,
+                        max_distance_threshold,
+                        range_distance_threshold)
+        )
 
         n_cluster_dis = []
         distance_threshold = []
@@ -84,9 +88,9 @@ class AgglomerativeCluster:
 
     def agglo_knife(
             self,
-            min_k: int = 2,
-            max_k: int = 10,
-            step=1,
+            min_cluster: int = 2,
+            max_cluster: int = 10,
+            step_cluster=1,
             knife: bool = True,
             **kwargs
     ):
@@ -100,7 +104,7 @@ class AgglomerativeCluster:
         #     min_k - minimum amount of cluster
         #     max_k - maximum amount of cluster
 
-        range_n_clusters = list(range(min_k, max_k, step))
+        range_n_clusters = list(range(min_cluster, max_cluster, step_cluster))
 
         n_clus = []
         silhouette = []
@@ -138,6 +142,6 @@ class AgglomerativeCluster:
 
         df = pd.DataFrame({
             'silhouette': silhouette},
-            index=range(min_k, max_k, step))
+            index=range(min_cluster, max_cluster, step_cluster))
 
         return df.transpose()
